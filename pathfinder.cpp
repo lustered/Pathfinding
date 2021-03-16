@@ -25,7 +25,7 @@
         // std::cout << " Goal";  In this case we can just get it by checking for m-1xn-1 
 
     } // End of for-loop
-    std::cout << std::endl;
+    /* std::cout << std::endl; */
 
     /* Continue to the next row */
     r++;
@@ -37,7 +37,6 @@ int main() {
   pathfinder pf(mapfile);
 
   /* Graph testing */
-  /* 
   graph<int> g;
   g.begin();
   g.insertVertex(1);
@@ -52,8 +51,9 @@ int main() {
 
   std::cout << "in degree of vertex 1: " << g.inDegree(1) << "\n";
   std::cout << "out degree of vertex 1: " << g.outDegree(1) << "\n";
-  std::cout << "Weight of edge 1->2" << g.getWeight(1, 2) << "\n";
-  */
+  std::cout << "Weight of edge 1->2 before" << g.getWeight(1, 2) << "\n";
+  g.setWeight(1, 2, 100);
+  std::cout << "Weight of edge 1->2 after" << g.getWeight(1, 2) << "\n";
 
   return 0;
 }

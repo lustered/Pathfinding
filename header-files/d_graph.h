@@ -27,7 +27,7 @@ class neighbor
 		// properties
 		int dest;
 		// weight of this edge
-		int weight;
+		mutable int weight;
 
 		// constructor
 		neighbor(int d=0, int c=0): dest(d), weight(c)
