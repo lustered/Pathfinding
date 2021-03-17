@@ -35,7 +35,7 @@ pathfinder::pathfinder(std::ifstream &mapfile) {
   /* Iterate to get all the lines in the file */
   while (mapfile >> line) {
     /* iterate for every char in the line */
-    for (int i = 0; i < line.length() - 1; ++i) {
+    for (int i = 0; i < line.length(); ++i) {
       /* If the character is an X, can't go there, else we can */
       if (line[i] == 'X')
         this->value[r][i] = false;
@@ -57,21 +57,40 @@ pathfinder::pathfinder(std::ifstream &mapfile) {
 
 void pathfinder::mapToGraph(graph<int> &g) {
 
-  // Create vertices
-  for (int i = 0; i < this->cols; ++i)
-    g.insertVertex(i);
+    // Create vertices
+    for (int i = 0; i < this->cols; ++i)
+      g.insertVertex(i);
 
-  for (int i = 0; i < this->rows; i++) 
-    for (int j = 0; j < this->cols; j++)
-      if ((this->value[i][j]) == true && i != j)
-        g.insertEdge(i, j, 1);
+    for (int i = 0; i < this->rows; i++)
+      for (int j = 0; j < this->value[i].size(); j++){
+        if ((this->value[i][j]) == true  && i != j)
+          g.insertEdge(i, j, 1);
+        if(this->value[j][i] == true && i != j)
+          g.insertEdge(j, i, 1);
+      }
 
-  /* std::cout << "i: " << i << " j: " << j << std::endl; */
-  /* std::cout << std::endl; */
+
+    for (int i = 0; i < this->rows - 1; i++)
+      if(this->value[i][0] == this->value[i+1][0])
+          g.insertEdge(i, i+1, 1);
+
+  /* for (int j = 0; j < this->cols - 1; j++) */ 
+  /*   for (int i = 0; i < this->value[j].size(); i++) */
+  /*     g.insertEdge(j, i, 1); */
+      /* std::cout << this->value[j][i]; */
 }
+/* vertices
+  OXXXXXXXXX
+  OOOOOOOOXX
+  OXOXOXOXXX
+  OXOXOXOOOO
+  XXOXXXOXXX
+  XOOOOOOOXX
+  XXXXXXXOOOZ
+*/
 
 int main() {
-  std::ifstream mapfile("map1.txt");
+  std::ifstream mapfile("mymap.txt");
   pathfinder pf(mapfile);
 
   /* Graph testing */
@@ -81,43 +100,23 @@ int main() {
   /* pf.displayVals(); */
   pf.mapToGraph(g);
 
-
   for (int i = 0; i < g.numberOfVertices(); ++i) {
     set<int> s = g.getNeighbors(i);
 
-    std::cout << "vertex: " << i;
+    std::cout << "vertex: " << i << " : ";
 
-    for (auto&& v: s)
-      /* links += v; */
-      std::cout <<  " --> " << v;
+    for (auto &&v : s)
+      std::cout << i << " --> " << v;
+
     std::cout << std::endl;
-    /* std::cout << "vertex: " << i << "-->" << links <<  endl; */
   }
-
-  /* pair<int,int> p; */
-
-  /* g.insertVertex(1); */
-  /* g.insertVertex(2); */
-  /* g.insertVertex(3); */
-  /* g.insertVertex(4); */
-  /* g.insertVertex(5); */
-  /* g.insertEdge(1, 4, 3); */
-  /* g.insertEdge(1, 2, 5); */
-  /* g.insertEdge(1, 3, 2); */
-  /* g.insertEdge(1, 5, 1); */
-  /* g.insertEdge(2, 1, 2); */
-  /* g.insertEdge(3, 1, 5); */
+  /* std::cout << g.numberOfVertices(); */
 
   /* std::cout << "in degree of vertex 1: " << g.inDegree(1) << "\n"; */
   /* std::cout << "out degree of vertex 1: " << g.outDegree(1) << "\n"; */
   /* std::cout << "Weight of edge 1->2 before" << g.getWeight(1, 2) << "\n"; */
   /* g.setWeight(1, 2, 100); */
   /* std::cout << "Weight of edge 1->2 after" << g.getWeight(1, 2) << "\n"; */
-
-  /* set<int> s = g.getNeighbors(1); */
-  /* for (auto&& v: s) */
-  /*   std::cout << v << std::endl; */
-
 
   return 0;
 }

@@ -1,12 +1,12 @@
 #pragma once
+#include "header-files/d_graph.h"
+#include "header-files/d_matrix.h"
 #include <fstream>
 #include <iostream>
 #include <queue>
 #include <sstream>
 #include <stack>
 #include <vector>
-#include "header-files/d_graph.h"
-#include "header-files/d_matrix.h"
 
 using std::queue;
 using std::stack;
@@ -14,6 +14,9 @@ using std::vector;
 
 class pathfinder {
 public:
+  int moves[4][4] = {{0, 1}, {-1, 0},  // right, down
+                     {0, -1}, {1, 0}}; // left, up
+
   /* Must have */
   pathfinder(std::ifstream &fin);
   void mapToGraph(graph<int> &g);
@@ -41,7 +44,7 @@ private:
   int cols; // number of longitudes/columns in the map
   matrix<bool> value;
   matrix<int> mapping; // Mapping from latitude and longitude co-ordinates
-                            // (i,j) values to node index values
+                       // (i,j) values to node index values
   std::vector<int>
       reverseMapI; // Mapping from node index values to map latitude i value
   std::vector<int>
