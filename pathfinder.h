@@ -25,12 +25,13 @@ public:
   void printPath(stack<int> &s);
   void print(int, int, int, int);
 
-  /* void map::printPath(stack<int> &s); */
+  /* Utility */
   bool isLegal(int i, int j);
   void setMap(int i, int j, int n);
   int getMap(int i, int j) const;
   int getReverseMapI(int n) const;
   int getReverseMapJ(int n) const;
+  void displayVals();
 
   int numRows() { return rows; };
   int numCols() { return cols; };

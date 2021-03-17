@@ -13,3 +13,7 @@
 
     g++ -std=c++11 -Wall pathfinder.cpp
     ./a.out map1.txt
+
+## Notes
+
+I have modified d_graph.h header file (provided by the professor) to properly compile using the gcc compiler.
