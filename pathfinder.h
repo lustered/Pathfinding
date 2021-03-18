@@ -14,6 +14,7 @@ using std::vector;
 
 class pathfinder {
 public:
+  bool* visited;
   int moves[4][4] = {{0, 1}, {-1, 0},  // right, down
                      {0, -1}, {1, 0}}; // left, up
 
@@ -42,6 +43,8 @@ public:
 private:
   int rows; // number of latitudes/rows in the map
   int cols; // number of longitudes/columns in the map
+
+
   matrix<bool> value;
   matrix<int> mapping; // Mapping from latitude and longitude co-ordinates
                        // (i,j) values to node index values

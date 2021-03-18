@@ -1,5 +1,5 @@
 3
 3
-OOX
-XOO
-XXZ
+OOO
+OOO
+OOOZ

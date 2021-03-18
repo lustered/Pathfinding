@@ -201,6 +201,19 @@ class graph
 		void clear();
 			// remove all the vertices and edges from the graph
 
+		void display(){
+		  /* Print all nodes and edges */
+			  for (int i = 1; i < numberOfEdges() - 2; i++) {
+			  set<int> nodes = getNeighbors(i);
+
+			  std::cout << "Node: " << i;
+
+			  for(auto&& n : nodes)
+				std::cout << " --> " << n;
+			  std::cout << std::endl;
+		  }
+		}
+
 		iterator begin();
 		iterator end();
 		const_iterator begin() const;

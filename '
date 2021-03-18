@@ -7,10 +7,10 @@
 /* Helpers */
 void pathfinder::displayVals() {
   for (int i = 0; i < this->rows; ++i) {
-    for (int j = 0; j < this->cols; ++j)
+    for (int j = 0; j < value[i].size(); ++j)
       /* std::cout << this->mapping[i][j]; */
-      std::cout << this->value[i][j];
-    std::cout << std::endl;
+      /* std::cout << this->value[i][j]; */
+      std::cout << std::endl;
   }
 }
 
@@ -36,6 +36,7 @@ pathfinder::pathfinder(std::ifstream &mapfile) {
 
   this->value.resize(this->rows, this->cols);
   this->mapping.resize(this->rows, this->cols);
+  this->visited = new bool[this->cols * this->cols];
 
   /* String to concatenate the lines in the file */
   std::string line;
@@ -67,7 +68,8 @@ pathfinder::pathfinder(std::ifstream &mapfile) {
 void pathfinder::mapToGraph(graph<int> &g) {
 
   // Create vertices
-  for (int i = 1; i <= (this->cols * this->cols); ++i)
+  /* for (int i = 1; i <= (this->cols * this->cols); ++i) */
+  for (int i = 1; i <= this->cols * this->cols; ++i)
     g.insertVertex(i);
 
   int vtx = 1;
@@ -96,60 +98,55 @@ void pathfinder::mapToGraph(graph<int> &g) {
     }
 }
 
-/* Recursive DFS */
 bool pathfinder::findPathRecursive(graph<int> &g, stack<int> &moves) {
-  /* unordered_map<int, bool> visited; */
-
-  /* Booleans are initialized as false by default */
-  bool *visited = new bool[g.numberOfVertices()];
-
-  bool found = false;
-
-  for (int i = 0; i < g.numberOfEdges(); i++)
+  for (int i = 1; i < g.numberOfEdges(); i++)
     for (auto &&node : g.getNeighbors(i)) {
 
       std::cout << "Current node: " << node << "\n";
 
       if (!visited[node]) {
+        visited[node] = true;
         findPathRecursive(g, moves);
+       
+      } /* Not sure this would be right */
+      else 
+        moves.push(node);
+        /* return true; */
       }
-    }
 
-  return found;
+  if (visited[this->cols * this->rows]) 
+    return true;
+
+  return false;
 }
+
+/* bool pathfinder::findPathNonRecursive1(graph<int> &g, stack<int> &moves){ }
+ */
+
+/* bool pathfinder::findPathNonRecursive2(graph<int> &g, queue<int> &moves){} */
+/* bool pathfinder::findShortestPath1(graph<int> &g, stack<int> &bestMoves){} */
+/* bool pathfinder::findShortestPath2(graph<int> &, vector<int> &bestMoves){} */
 
 int main() {
   std::ifstream mapfile("map1.txt");
   pathfinder pf(mapfile);
 
-  /* Graph testing */
   graph<int> g;
 
   pf.displayVals();
   pf.mapToGraph(g);
-  stack<int> moves;
-  std::cout << pf.findPathRecursive(g, moves);
+  stack<int> sm;
+  queue<int> qm;
 
-  /* std::cout << g.numberOfEdges(); */
+  /* g.display(); */
 
-  /* Print all nodes and edges */
-  /* for (int i = 1; i < g.numbcrOfEdges(); i++) { */
-  /* for (int i = 1; i < 3; i++) { */
+  std::cout << pf.findPathRecursive(g, sm) << std::endl;
 
-  /* set<int> nodes = g.getNeighbors(i); */
-  /* std::cout << "Node: " << i; */
+  /* Display the visited array */
+  /* for(int i = 1; i < pf.numCols() * pf.numRows();i++) */
+  /*   std::cout << pf.visited[i] << " -> " << i << std::endl; */
 
-  /* for(auto&& n : nodes) */
-  /*   std::cout << " --> " << n; */
-
-  /* std::cout << std::endl; */
-  /* } */
-
-  /* std::cout << "in degree of vertex 1: " << g.inDegree(1) << "\n"; */
-  /* std::cout << "out degree of vertex 1: " << g.outDegree(1) << "\n"; */
-  /* std::cout << "Weight of edge 1->2 before" << g.getWeight(1, 2) << "\n"; */
-  /* g.setWeight(1, 2, 100); */
-  /* std::cout << "Weight of edge 1->2 after" << g.getWeight(1, 2) << "\n"; */
+  /* g.display(); */
 
   return 0;
 }
