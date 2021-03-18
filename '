@@ -102,31 +102,20 @@ bool pathfinder::findPathRecursive(graph<int> &g, stack<int> &moves) {
 
   /* Booleans are initialized as false by default */
   bool *visited = new bool[g.numberOfVertices()];
-  graph<int> *tmp = new graph<int>(g);
 
-  unsigned int vrtx = 1; 
   bool found = false;
-  visited[vrtx] = true;
 
-  for (int i = 1; i < g.numberOfEdges(); i++)
+  for (int i = 0; i < g.numberOfEdges(); i++)
     for (auto &&node : g.getNeighbors(i)) {
 
       std::cout << "Current node: " << node << "\n";
 
       if (!visited[node]) {
-        tmp->eraseVertex(vrtx++);
-        findPathRecursive(*tmp, moves);
+        findPathRecursive(g, moves);
       }
     }
 
   return found;
-}
-/* DFS */
-bool pathfinder::findPathNonRecursive1(graph<int> &g, stack<int> &moves){
-
-  stack<int> visited;
-
-  return false;
 }
 
 int main() {
@@ -140,7 +129,6 @@ int main() {
   pf.mapToGraph(g);
   stack<int> moves;
   std::cout << pf.findPathRecursive(g, moves);
-  /* std::cout << pf.findPathNonRecursive1(g, moves); */
 
   /* std::cout << g.numberOfEdges(); */
 
