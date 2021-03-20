@@ -1,32 +1,33 @@
 #include "pathfinder.h"
-#include "header-files/d_graph.h"
-/* #include "header-files/jankibhimani-graph.h" */
 #include <iterator>
 #include <sstream>
 #include <unordered_map>
 
 /* Helpers */
 void pathfinder::displayVals() {
-  for (int i = 0; i < this->rows; ++i) {
-    for (int j = 0; j < value[i].size(); ++j)
-      /* std::cout << this->mapping[i][j]; */
-      std::cout << this->value[i][j];
+  for (int i = 0; i < this->rows; i++) {
+    for (int j = 0; j < this->cols; j++) {
+      /* std::cout << std::setw(4) << this->mapping[i][j]; */
+      printf("%4d", this->mapping[i][j]);
+      /* printf("%4d", this->value[i][j]); */
+    }
     std::cout << std::endl;
   }
 }
 
 bool pathfinder::isLegal(int i, int j) {
   /* if (i < 0 || i > this->rows - 1 || j < 0 || j > this->cols - 1) */
+  /*   return false; */
+  /* if (!this->value[i][j]) */
+  /*   return false; */
 
-  /* Brute force check */
+  /* return true; */
   try {
-    if (this->value[i][j] == true)
+    if (this->value[i][j])
       return true;
     else
       return false;
-
-  } catch (const std::exception &e) {
-    std::cout << "Caught exception\n";
+  } catch (const std::exception) {
     return false;
   }
 }
@@ -35,10 +36,8 @@ bool pathfinder::isLegal(int i, int j) {
 pathfinder::pathfinder(std::ifstream &mapfile) {
   mapfile >> this->rows >> this->cols;
 
-  this->value.resize(this->rows, this->cols);
-  this->mapping.resize(this->rows, this->cols);
-  /* this->visited = new bool[this->cols * this->cols]; */
-  this->visited = new bool[this->cols * this->cols];
+  this->value = matrix<bool>(this->rows, this->cols, -1);
+  this->mapping = matrix<int>(this->rows, this->cols, -1);
 
   /* String to concatenate the lines in the file */
   std::string line;
@@ -67,121 +66,123 @@ pathfinder::pathfinder(std::ifstream &mapfile) {
  *         [1, 0]  up
  */
 
-void pathfinder::mapToGraph(graph<int> &g) {
 
-  // Create vertices
-  /* for (int i = 1; i <= (this->cols * this->cols); ++i) */
-  for (int i = 1; i <= this->cols * this->cols; ++i)
-    g.insertVertex(i);
+/* bool pathfinder::findPathRecursive(graph &g, stack<int> &moves) { */
+/*   for (int i = 1; i < g.; i++) */
+/*     for (auto &&node : g.getNeighbors(i)) { */
 
-  int vtx = 1;
+/*       std::cout << "Current node: " << node << "\n"; */
+
+/*       if (!visited[node]) { */
+/*         visited[node] = true; */
+/*         findPathRecursive(g, moves); */
+/*       } */
+
+/*       /1* Not sure this would be right *1/ */
+/*       if(node == (this->cols * this->rows)){ */
+/*         std::cout << " result "<< node + this->cols; */
+/*         return true; */
+/*       } */
+/*     } */
+
+/*   return false; */
+/* } */
+
+/* bool pathfinder::findPathNonRecursive1(graph &g, stack<int> &moves){ */
+/*     /1* moves.push(initNode); *1/ */
+/*     bool visited[g.numberOfVertices()]; */
+/*     stack<int> ret; */
+/*     int initNode = 1; */
+/*     ret.push(initNode); */
+
+/*     while(!ret.empty()) */
+/*     { */
+
+/*       int cn = ret.top(); */
+/*       ret.pop(); */
+
+/*       if(!visited[cn]) */
+/*         visited[cn] = true; */
+
+/*       for (int i = initNode; i < g.numberOfEdges(); i++) */
+/*         for (auto &&node : g.getNeighbors(i)){ */
+
+/*           if(!visited[node]) */
+/*             ret.push(node); */
+/*           else if(node == (this->cols * this->rows)) */
+/*             return true; */
+/*           /1* else *1/ */
+
+/*         } */
+/*     } */
+
+/*     return false; */
+/* } */
+
+
+void pathfinder::mapToGraph(graph &g) {
+  /* The first node added will be a 0 */ 
+  int vtx = 0;
 
   for (int i = 0; i < this->rows; i++)
-    for (int j = 0; j < this->value[i].size(); j++) {
-
-      /* Check down */
-      if (i != this->rows - 1 && j == this->cols - 1)
-        if (isLegal(i, this->value[i + 1][j]))
-          g.insertEdge(vtx, vtx + this->cols, this->cols);
-
-      /* Check right */
-      if (i < this->rows - 1 && j < this->cols - 1) {
-        if (isLegal(value[i][j], value[i][j + 1]))
-          g.insertEdge(vtx, vtx + 1, this->cols);
-
-        /* Down */
-        if (isLegal(value[i][j], value[i + 1][j]))
-          g.insertEdge(vtx, vtx + this->cols, this->cols);
-      } else if (i == this->rows - 1 && j < this->cols - 1) // Last row
-        /* Check right */
-        if (isLegal(value[i][j], value[i][j + 1]))
-          g.insertEdge(vtx, vtx + 1, this->cols);
-      vtx++;
-    }
-}
-
-bool pathfinder::findPathRecursive(graph<int> &g, stack<int> &moves) {
-  for (int i = 1; i < g.numberOfEdges(); i++)
-    for (auto &&node : g.getNeighbors(i)) {
-
-      std::cout << "Current node: " << node << "\n";
-
-      if (!visited[node]) {
-        visited[node] = true;
-        findPathRecursive(g, moves);
-      } 
-
-      /* Not sure this would be right */
-      if(node == (this->cols * this->rows)){
-        std::cout << " result "<< node + this->cols;
-        return true;
+    for (int j = 0; j < this->cols; j++) {
+      if (isLegal(i, j)) {
+        this->mapping[i][j] = vtx;
+        g.addNode(vtx);
+        vtx++;
       }
     }
 
-  return false;
-}
+  vtx = 0;
 
+  for (int i = 0; i < this->rows; ++i)
+    for (int j = 0; j < this->cols; ++j) {
+      /* Check Vertically */
+      if (i < this->rows - 1)
+        if (isLegal(i, j) && isLegal(i + 1, j))
+          g.addEdge(this->mapping[i][j], this->mapping[i + 1][j]);
 
-bool pathfinder::findPathNonRecursive1(graph<int> &g, stack<int> &moves){ 
-    /* moves.push(initNode); */
-    bool visited[g.numberOfVertices()];
-    stack<int> ret;
-    int initNode = 1;
-    ret.push(initNode);
-
-    while(!ret.empty())
-    {
-
-      int cn = ret.top();
-      ret.pop();
-
-      if(!visited[cn])
-        visited[cn] = true;
-
-      for (int i = initNode; i < g.numberOfEdges(); i++)
-        for (auto &&node : g.getNeighbors(i)){
-
-          if(!visited[node])
-            ret.push(node);
-          else if(node == (this->cols * this->rows))
-            return true;
-          /* else */
-
-        }
+      /* Check horizontally */
+      if (j < this->cols - 1)
+        if (isLegal(i, j) && isLegal(i, j + 1))
+          g.addEdge(this->mapping[i][j], this->mapping[i][j + 1]);
     }
-
-    return false;
 }
-/* bool pathfinder::findPathNonRecursive2(graph<int> &g, queue<int> &moves){} */
-/* bool pathfinder::findShortestPath1(graph<int> &g, stack<int> &bestMoves){} */
-/* bool pathfinder::findShortestPath2(graph<int> &, vector<int> &bestMoves){} */
+
+/* bool pathfinder::findPathNonRecursive2(graph &g, queue<int> &moves){} */
+/* bool pathfinder::findShortestPath1(graph &g, stack<int> &bestMoves){} */
+/* bool pathfinder::findShortestPath2(graph &, vector<int> &bestMoves){} */
 
 int main() {
+  /********************** Read from file **********************/
   std::ifstream mapfile("map1.txt");
   pathfinder pf(mapfile);
 
-  graph<int> g;
-
-  pf.displayVals();
+  graph g;
   pf.mapToGraph(g);
+  pf.displayVals();
+
+
+  /********************* Graph info **********************/
+  g.printNodes();
+  g.printEdges();
+
+  /********************* Pathfinding algorithms **********************/
   stack<int> sm;
   queue<int> qm;
-
-  /* g.display(); */
-
+  vector<int> vm;
   /* std::cout << pf.findPathRecursive(g, sm); */
-  std::cout << pf.findPathNonRecursive1(g, sm);
-  std::cout << "stack size: " << sm.size() << std::endl;
-  while(!sm.empty()){
-    std::cout << sm.top() << std::endl;
-    sm.pop();
-  }
+  /* std::cout << pf.findPathNonRecursive1(g, sm); */
+  /* std::cout << pf.findPathNonRecursive2(g, qm); */
+  /* std::cout << pf.findShortestPath1(g, sm); */
+  /* std::cout << pf.findShortestPath2(g, vm); */
 
-  /* Display the visited array */
-  /* for(int i = 1; i < pf.numCols() * pf.numRows();i++) */
-  /*   std::cout << pf.visited[i] << " -> " << i << std::endl; */
-
-  /* g.display(); */
+  /********************* Print the stack **********************/
+  /* std::cout << "stack size: " << sm.size() << std::endl; */
+  /* while(!sm.empty()){ */
+  /*   std::cout << sm.top() << std::endl; */
+  /*   sm.pop(); */
+  /* } */
 
   return 0;
 }

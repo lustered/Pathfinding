@@ -1,5 +1,5 @@
 #pragma once
-#include "header-files/d_graph.h"
+#include "header-files/jankibhimani-graph.h"
 #include "header-files/d_matrix.h"
 #include <fstream>
 #include <iostream>
@@ -20,12 +20,12 @@ public:
 
   /* Must have */
   pathfinder(std::ifstream &fin);
-  void mapToGraph(graph<int> &g);
-  bool findPathRecursive(graph<int> &g, stack<int> &moves);
-  bool findPathNonRecursive1(graph<int> &g, stack<int> &moves);
-  bool findPathNonRecursive2(graph<int> &g, queue<int> &moves);
-  bool findShortestPath1(graph<int> &g, stack<int> &bestMoves);
-  bool findShortestPath2(graph<int> &, vector<int> &bestMoves);
+  void mapToGraph(graph &g);
+  bool findPathRecursive(graph &g, stack<int> &moves);
+  bool findPathNonRecursive1(graph &g, stack<int> &moves);
+  bool findPathNonRecursive2(graph &g, queue<int> &moves);
+  bool findShortestPath1(graph &g, stack<int> &bestMoves);
+  bool findShortestPath2(graph &, vector<int> &bestMoves);
   void printPath(stack<int> &s);
   void print(int, int, int, int);
 
