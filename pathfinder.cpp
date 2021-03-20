@@ -1,5 +1,6 @@
 #include "pathfinder.h"
 #include "header-files/d_graph.h"
+/* #include "header-files/jankibhimani-graph.h" */
 #include <iterator>
 #include <sstream>
 #include <unordered_map>
@@ -9,8 +10,8 @@ void pathfinder::displayVals() {
   for (int i = 0; i < this->rows; ++i) {
     for (int j = 0; j < value[i].size(); ++j)
       /* std::cout << this->mapping[i][j]; */
-      /* std::cout << this->value[i][j]; */
-      std::cout << std::endl;
+      std::cout << this->value[i][j];
+    std::cout << std::endl;
   }
 }
 
@@ -112,6 +113,7 @@ bool pathfinder::findPathRecursive(graph<int> &g, stack<int> &moves) {
 
       /* Not sure this would be right */
       if(node == (this->cols * this->rows)){
+        std::cout << " result "<< node + this->cols;
         return true;
       }
     }
@@ -119,10 +121,37 @@ bool pathfinder::findPathRecursive(graph<int> &g, stack<int> &moves) {
   return false;
 }
 
-bool pathfinder::findPathNonRecursive1(graph<int> &g, stack<int> &moves){ 
-    
-}
 
+bool pathfinder::findPathNonRecursive1(graph<int> &g, stack<int> &moves){ 
+    /* moves.push(initNode); */
+    bool visited[g.numberOfVertices()];
+    stack<int> ret;
+    int initNode = 1;
+    ret.push(initNode);
+
+    while(!ret.empty())
+    {
+
+      int cn = ret.top();
+      ret.pop();
+
+      if(!visited[cn])
+        visited[cn] = true;
+
+      for (int i = initNode; i < g.numberOfEdges(); i++)
+        for (auto &&node : g.getNeighbors(i)){
+
+          if(!visited[node])
+            ret.push(node);
+          else if(node == (this->cols * this->rows))
+            return true;
+          /* else */
+
+        }
+    }
+
+    return false;
+}
 /* bool pathfinder::findPathNonRecursive2(graph<int> &g, queue<int> &moves){} */
 /* bool pathfinder::findShortestPath1(graph<int> &g, stack<int> &bestMoves){} */
 /* bool pathfinder::findShortestPath2(graph<int> &, vector<int> &bestMoves){} */
@@ -140,8 +169,13 @@ int main() {
 
   /* g.display(); */
 
-  std::cout << pf.findPathRecursive(g, sm);
-  std::cout << "Stack has: " << sm.size() << " elements" << std::endl;
+  /* std::cout << pf.findPathRecursive(g, sm); */
+  std::cout << pf.findPathNonRecursive1(g, sm);
+  std::cout << "stack size: " << sm.size() << std::endl;
+  while(!sm.empty()){
+    std::cout << sm.top() << std::endl;
+    sm.pop();
+  }
 
   /* Display the visited array */
   /* for(int i = 1; i < pf.numCols() * pf.numRows();i++) */
