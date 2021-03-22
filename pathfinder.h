@@ -26,8 +26,8 @@ public:
   bool findPathNonRecursive2(graph &g, queue<int> &moves);
   bool findShortestPath1(graph &g, stack<int> &bestMoves);
   bool findShortestPath2(graph &, vector<int> &bestMoves);
-  void printPath(stack<int> &s);
-  void print(int, int, int, int);
+  void printPath(stack<int> &s); // LEFT RIGHT ....
+  void print(int, int, int, int); // print visual
 
   /* Utility */
   bool isLegal(int i, int j);

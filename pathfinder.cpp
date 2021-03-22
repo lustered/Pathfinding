@@ -94,9 +94,9 @@ void pathfinder::mapToGraph(graph &g) {
     }
 }
 
-/* DFS */
+/********************* DFS **********************/
 bool pathfinder::findPathNonRecursive1(graph &g, stack<int> &moves) {
-  std::cout << "Performing DFS: findPathRecursive1\n";
+  std::cout << "\n\nPerforming DFS: findPathRecursive1\n";
 
   /* Starting node will be 0, since that's [0][0]; */
   moves.push(0);
@@ -132,9 +132,9 @@ bool pathfinder::findPathNonRecursive1(graph &g, stack<int> &moves) {
   return false;
 }
 
-/* BFS */
+/********************* BFS **********************/
 bool pathfinder::findPathNonRecursive2(graph &g, queue<int> &moves) {
-  std::cout << "Performing BFS: findPathRecursive2\n";
+  std::cout << "\n\nPerforming BFS: findPathRecursive2\n";
 
   moves.push(0);
   g.getNode(0).visit();
@@ -166,22 +166,40 @@ bool pathfinder::findPathNonRecursive2(graph &g, queue<int> &moves) {
   return false;
 }
 
-/* TODO */
-/* bool pathfinder::findPathRecursive(graph &g, stack<int> &moves) { */
-/*   /1* Stop recursion *1/ */ 
-/*   if (g.getNode(g.numNodes() - 1).isVisited()) { */
-/*     /1* Make sure we leave the graph intact for the next algorithm *1/ */
-/*     g.clearVisit(); */
-/*     std::cout << "found goal\n"; */
-/*     return true; */
-/*   } */
+/********************* Recurisve **********************/
+bool pathfinder::findPathRecursive(graph &g, stack<int> &moves) {
 
-/*     for (int i = 0; i < g.numNodes(); i++) */
-/*       if (g.isEdge(cn, i)) */
-/*         if (!g.isVisited(i)) */
-/*           moves.push(i); */
+  /*********** Stop recursion ***********/
+  if (g.getNode(g.numNodes() - 1).isVisited()) {
+    /* Make sure we leave the graph intact for the next algorithm */
+    g.clearVisit();
 
-/* } */
+    while (!moves.empty())
+      moves.pop();
+
+    std::cout << "found goal\n";
+    return true;
+  }
+
+  if (!moves.empty()) { // return true;
+
+    int cn = moves.top();
+    moves.pop();
+    g.visit(cn);
+
+    std::cout << "Current node: " << cn << std::endl;
+
+    for (int i = 0; i < g.numNodes(); i++) {
+      if (g.isEdge(cn, i))
+        if (!g.isVisited(i)) {
+          moves.push(i);
+          /* findPathRecursive(g, moves); */
+        }
+    }
+  }
+
+  return findPathRecursive(g, moves);
+}
 
 /* bool pathfinder::findShortestPath1(graph &g, stack<int> &bestMoves){} */
 /* bool pathfinder::findShortestPath2(graph &, vector<int> &bestMoves){} */
@@ -207,9 +225,14 @@ int main() {
   /* std::cout << pf.findPathNonRecursive2(g, qm); */
 
   /********************* TODO **********************/
+  /* Push the source edge. Incremental search */
+  sm.push(0);
   std::cout << pf.findPathRecursive(g, sm);
+
   /* std::cout << pf.findShortestPath1(g, sm); */
   /* std::cout << pf.findShortestPath2(g, vm); */
+
+  /********************* TESTING **********************/
 
   /********************* Print the stack **********************/
   /* std::cout << "stack size: " << sm.size() << std::endl; */
