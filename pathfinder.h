@@ -14,7 +14,6 @@ using std::vector;
 
 class pathfinder {
 public:
-  bool* visited;
   int moves[4][4] = {{0, 1}, {-1, 0},  // right, down
                      {0, -1}, {1, 0}}; // left, up
 

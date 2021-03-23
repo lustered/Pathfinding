@@ -8,8 +8,8 @@ void pathfinder::displayVals() {
   for (int i = 0; i < this->rows; i++) {
     for (int j = 0; j < this->cols; j++) {
       /* std::cout << std::setw(4) << this->mapping[i][j]; */
-      printf("%4d", this->mapping[i][j]);
-      /* printf("%4d", this->value[i][j]); */
+      printf("%5d", this->mapping[i][j]);
+      /* printf("%5d", this->value[i][j]); */
     }
     std::cout << std::endl;
   }
@@ -98,12 +98,15 @@ void pathfinder::mapToGraph(graph &g) {
 bool pathfinder::findPathNonRecursive1(graph &g, stack<int> &moves) {
   std::cout << "\n\nPerforming DFS: findPathRecursive1\n";
 
+  stack<int> dfs;
   /* Starting node will be 0, since that's [0][0]; */
+  dfs.push(0);
   moves.push(0);
+
   g.getNode(0).visit();
 
   /* While there are nodes unvisited */
-  while (!moves.empty()) {
+  while (!dfs.empty()) {
 
     /* Check if the last node was visited. If so, we solved the maze. */
     if (g.getNode(g.numNodes() - 1).isVisited()) {
@@ -114,8 +117,8 @@ bool pathfinder::findPathNonRecursive1(graph &g, stack<int> &moves) {
     }
 
     /* Get the last added node in the stack to be our current node(cn) */
-    int cn = moves.top();
-    moves.pop();
+    int cn = dfs.top();
+    dfs.pop();
 
     std::cout << "Current node: " << cn << std::endl;
 
@@ -123,10 +126,13 @@ bool pathfinder::findPathNonRecursive1(graph &g, stack<int> &moves) {
     if (!g.isVisited(cn))
       g.getNode(cn).visit();
 
+    /* Add the neighbor nodes */
     for (int i = 0; i < g.numNodes(); i++)
       if (g.isEdge(cn, i))
-        if (!g.isVisited(i))
+        if (!g.isVisited(i)) {
+          dfs.push(i);
           moves.push(i);
+        }
   }
 
   return false;
@@ -136,12 +142,15 @@ bool pathfinder::findPathNonRecursive1(graph &g, stack<int> &moves) {
 bool pathfinder::findPathNonRecursive2(graph &g, queue<int> &moves) {
   std::cout << "\n\nPerforming BFS: findPathRecursive2\n";
 
+  queue<int> bfs;
+
+  bfs.push(0);
   moves.push(0);
   g.getNode(0).visit();
 
-  while (!moves.empty()) {
-    int cn = moves.front();
-    moves.pop();
+  while (!bfs.empty()) {
+    int cn = bfs.front();
+    bfs.pop();
 
     std::cout << "Current node: " << cn << std::endl;
 
@@ -157,10 +166,13 @@ bool pathfinder::findPathNonRecursive2(graph &g, queue<int> &moves) {
     if (!g.isVisited(cn))
       g.getNode(cn).visit();
 
+    /* Add the neighbor nodes */
     for (int i = 0; i < g.numNodes(); i++)
       if (g.isEdge(cn, i))
-        if (!g.isVisited(i))
+        if (!g.isVisited(i)) {
           moves.push(i);
+          bfs.push(i);
+        }
   }
 
   return false;
@@ -191,18 +203,53 @@ bool pathfinder::findPathRecursive(graph &g, stack<int> &moves) {
 
     for (int i = 0; i < g.numNodes(); i++) {
       if (g.isEdge(cn, i))
-        if (!g.isVisited(i)) {
+        if (!g.isVisited(i))
           moves.push(i);
-          /* findPathRecursive(g, moves); */
-        }
     }
   }
 
   return findPathRecursive(g, moves);
 }
-
 /* bool pathfinder::findShortestPath1(graph &g, stack<int> &bestMoves){} */
 /* bool pathfinder::findShortestPath2(graph &, vector<int> &bestMoves){} */
+
+void pathfinder::printPath(stack<int> &s) {
+  /* Reverse stack in the proper order */
+  stack<int> tmp;
+  while (!s.empty()) {
+    int cn = s.top();
+    tmp.push(cn);
+    s.pop();
+  }
+
+  /* Divider */
+  std::string divider(this->cols * 4, '-');
+
+  while (!tmp.empty()) {
+    /* Get current node */
+    int cn = tmp.top();
+    tmp.pop();
+
+    std::cout << divider << '\n';
+    /* Current position of the node; */
+    for (int i = 0; i < this->rows; i++) {
+      for (int j = 0; j < this->cols; j++) {
+        if (this->mapping[i][j] == cn)
+          printf("%3c|", '@');
+        else
+          if(this->value[i][j])
+            printf("%3c|", 'O' );
+          else
+            printf("%3c|", 'X');
+
+      }
+      std::cout << "\n";
+    }
+
+    std::cout << divider << '\n';
+    std::cout << "\n";
+  }
+}
 
 int main() {
   /********************** Read from file **********************/
@@ -216,27 +263,35 @@ int main() {
   /********************* Graph info **********************/
   /* g.printNodes(); */
   /* g.printEdges(); */
+  /* std::cout << g; */
+
   /********************* Pathfinding algorithms **********************/
   stack<int> sm;
   queue<int> qm;
   vector<int> vm;
-  /********************* Working condition **********************/
-  /* std::cout << pf.findPathNonRecursive1(g, sm); */
+
+  /********************* Working Algorithms **********************/
+  /*___________ Iterative _________*/
+  std::cout << pf.findPathNonRecursive1(g, sm);
   /* std::cout << pf.findPathNonRecursive2(g, qm); */
 
-  /********************* TODO **********************/
+  /*___________ Recursive _________*/
   /* Push the source edge. Incremental search */
-  sm.push(0);
-  std::cout << pf.findPathRecursive(g, sm);
+  /* sm.push(0); */
+  /* std::cout << pf.findPathRecursive(g, sm); */
 
+  /********************* TODO **********************/
+
+  std::cout << "\nstack size: " << sm.size() << std::endl;
+  pf.printPath(sm);
   /* std::cout << pf.findShortestPath1(g, sm); */
   /* std::cout << pf.findShortestPath2(g, vm); */
 
   /********************* TESTING **********************/
 
   /********************* Print the stack **********************/
-  /* std::cout << "stack size: " << sm.size() << std::endl; */
-  /* while(!sm.empty()){ */
+  /* std::cout << "\nstack size: " << sm.size() << std::endl; */
+  /* while (!sm.empty()) { */
   /*   std::cout << sm.top() << std::endl; */
   /*   sm.pop(); */
   /* } */
