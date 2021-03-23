@@ -118,6 +118,7 @@ bool pathfinder::findPathNonRecursive1(graph &g, stack<int> &moves) {
 
     /* Get the last added node in the stack to be our current node(cn) */
     int cn = dfs.top();
+    moves.push(cn);
     dfs.pop();
 
     std::cout << "Current node: " << cn << std::endl;
@@ -129,10 +130,8 @@ bool pathfinder::findPathNonRecursive1(graph &g, stack<int> &moves) {
     /* Add the neighbor nodes */
     for (int i = 0; i < g.numNodes(); i++)
       if (g.isEdge(cn, i))
-        if (!g.isVisited(i)) {
+        if (!g.isVisited(i))
           dfs.push(i);
-          moves.push(i);
-        }
   }
 
   return false;
@@ -150,6 +149,7 @@ bool pathfinder::findPathNonRecursive2(graph &g, queue<int> &moves) {
 
   while (!bfs.empty()) {
     int cn = bfs.front();
+    moves.push(cn);
     bfs.pop();
 
     std::cout << "Current node: " << cn << std::endl;
@@ -169,10 +169,8 @@ bool pathfinder::findPathNonRecursive2(graph &g, queue<int> &moves) {
     /* Add the neighbor nodes */
     for (int i = 0; i < g.numNodes(); i++)
       if (g.isEdge(cn, i))
-        if (!g.isVisited(i)) {
-          moves.push(i);
+        if (!g.isVisited(i))
           bfs.push(i);
-        }
   }
 
   return false;
@@ -210,6 +208,7 @@ bool pathfinder::findPathRecursive(graph &g, stack<int> &moves) {
 
   return findPathRecursive(g, moves);
 }
+
 /* bool pathfinder::findShortestPath1(graph &g, stack<int> &bestMoves){} */
 /* bool pathfinder::findShortestPath2(graph &, vector<int> &bestMoves){} */
 
@@ -241,7 +240,6 @@ void pathfinder::printPath(stack<int> &s) {
             printf("%3c|", 'O' );
           else
             printf("%3c|", 'X');
-
       }
       std::cout << "\n";
     }
@@ -272,7 +270,7 @@ int main() {
 
   /********************* Working Algorithms **********************/
   /*___________ Iterative _________*/
-  std::cout << pf.findPathNonRecursive1(g, sm);
+  /* std::cout << pf.findPathNonRecursive1(g, sm); */
   /* std::cout << pf.findPathNonRecursive2(g, qm); */
 
   /*___________ Recursive _________*/
@@ -282,8 +280,8 @@ int main() {
 
   /********************* TODO **********************/
 
-  std::cout << "\nstack size: " << sm.size() << std::endl;
-  pf.printPath(sm);
+  /* std::cout << "\nstack size: " << sm.size() << std::endl; */
+  /* pf.printPath(sm); */
   /* std::cout << pf.findShortestPath1(g, sm); */
   /* std::cout << pf.findShortestPath2(g, vm); */
 
@@ -291,9 +289,9 @@ int main() {
 
   /********************* Print the stack **********************/
   /* std::cout << "\nstack size: " << sm.size() << std::endl; */
-  /* while (!sm.empty()) { */
-  /*   std::cout << sm.top() << std::endl; */
-  /*   sm.pop(); */
+  /* while (!qm.empty()) { */
+  /*   std::cout << qm.front() << std::endl; */
+  /*   qm.pop(); */
   /* } */
 
   return 0;
